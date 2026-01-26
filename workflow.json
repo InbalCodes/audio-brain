@@ -106,13 +106,15 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "fallbackOutput": "extra"
+        }
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
         224,
-        64
+        144
       ],
       "id": "fa62632f-837a-4a20-991d-40ed01027d72",
       "name": "Switch"
@@ -175,8 +177,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        448,
-        288
+        672,
+        192
       ],
       "id": "805b9770-dba3-4629-8d57-d61cce48bfd2",
       "name": "Reply File",
@@ -202,8 +204,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        672,
-        288
+        896,
+        192
       ],
       "id": "6897e6fa-b72a-4a93-8853-37c007326f3e",
       "name": "Get File From Telegram"
@@ -215,8 +217,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        896,
-        288
+        1120,
+        192
       ],
       "id": "ce54a51a-608c-4766-9bfa-ba58f58389eb",
       "name": "Update Binay Data"
@@ -247,8 +249,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1120,
-        288
+        1344,
+        192
       ],
       "id": "945998b4-d602-426b-a504-2966827690a5",
       "name": "Get Transcription from Groq",
@@ -283,8 +285,8 @@
       "type": "@n8n/n8n-nodes-langchain.anthropic",
       "typeVersion": 1,
       "position": [
-        1344,
-        288
+        1568,
+        192
       ],
       "id": "f0388dba-c6a6-4e31-a22f-187b8e5cbede",
       "name": "Get Analisys from Claude",
@@ -299,13 +301,15 @@
       "parameters": {
         "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
         "text": "={{ $json.content[0].text }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1696,
-        288
+        1920,
+        192
       ],
       "id": "1fadbbf9-593e-45ec-a804-8936b3fb4639",
       "name": "Audio Brain Reply",
@@ -323,18 +327,99 @@
           "message"
         ],
         "additionalFields": {
-          "download": true
+          "download": false
         }
       },
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
         0,
-        96
+        192
       ],
       "id": "16c22ed1-62cd-4e13-855a-acd25c3cabda",
       "name": "Audio Brain Bot Gets a Message",
       "webhookId": "e6761745-ea48-4918-a2a2-2c0dba69746f",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
+        "text": "=⚠️ File too large! Currently, I can only process files up to 25MB. Stay tuned for version 2.0!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        384
+      ],
+      "id": "85fd44ea-7da2-4f6d-a173-86c45c4899f5",
+      "name": "Send a text message",
+      "webhookId": "cac1f16e-152b-4a34-8de9-e2e69b04c6ed",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2a0aeea4-5a47-4136-af79-622ec181e264",
+              "leftValue": "={{ $('Audio Brain Bot Gets a Message').item.json.message.audio.file_size }}",
+              "rightValue": 26214400,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        288
+      ],
+      "id": "6fc5e184-9545-4ccd-9fa2-5ffc6e93aa15",
+      "name": "Check File Size < 25MB"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
+        "text": "=I'm all ears! 🎧 Currently, I can only process voice notes and audio files. Please send an audio message and I'll get to work!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        480
+      ],
+      "id": "6e5a1b2d-1a67-4bc5-aff0-8d37e6b7dad9",
+      "name": "Send a text message1",
+      "webhookId": "6f38a002-f84e-4d36-99b4-4db08bed0762",
       "credentials": {
         "telegramApi": {
           "id": "4iygwNwfi8IqNR8E",
@@ -363,14 +448,21 @@
         ],
         [
           {
-            "node": "Reply File",
+            "node": "Check File Size < 25MB",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Reply File",
+            "node": "Check File Size < 25MB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
             "type": "main",
             "index": 0
           }
@@ -442,6 +534,24 @@
           }
         ]
       ]
+    },
+    "Check File Size < 25MB": {
+      "main": [
+        [
+          {
+            "node": "Reply File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -449,7 +559,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "ce84f9ec-d7ac-4d20-8f41-282fee2391f9",
+  "versionId": "0186ba83-004f-4339-8124-75388489b9bf",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "02b2c9f7af125809c04048003cda25eff918401f732ad2a9228d5ff437ce8c82"
