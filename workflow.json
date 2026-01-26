@@ -1,0 +1,459 @@
+{
+  "name": "Audio Brain",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7e5bb055-4507-4413-abc5-6da686d9cec6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "458143be-d42d-4ec8-8335-5e2ba042b9a3",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2f4fa88f-3d8c-4317-bbc5-242a233b0e9d",
+                    "leftValue": "={{ $json.message.audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "any message - audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cf2181d2-89a7-470a-ba3e-2da2ce86be9b",
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "any message - voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        64
+      ],
+      "id": "fa62632f-837a-4a20-991d-40ed01027d72",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Welcome to Audio Brain! 🎙️\n\nI'm ready to work. Simply send me a voice note or upload an audio file (MP3, WAV, M4A), and I will analyze it for you in seconds.\n\nI support both English and Hebrew—let's get started! 🚀",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "73a03b1e-1083-4fd0-b21c-8f375df149d7",
+      "name": "Reply Start",
+      "webhookId": "b7c461dd-3aa3-4b6a-9c21-75b9bd139e33",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.from.id }}",
+        "text": "=<b>How to use Audio Brain:</b>\n\n1. <b>Record or Forward:</b> Send any voice note or upload an audio file (MP3, M4A, WAV).\n2. <b>Get Insights:</b> In seconds, I will provide a summary, action items, and a full transcript.\n3. <b>Dual Language:</b> I fully support both <b>English and Hebrew</b>.\n\n---\n<b>Created by:</b> <a href=\"https://www.linkedin.com/in/inbal-sertshuk-46858519\">Inbal Sertshuk</a>\n<i>Feel free to connect for automation insights!</i>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        96
+      ],
+      "id": "31ec768f-5ab6-436e-b8d0-0517de8b8bc8",
+      "name": "Reply Help",
+      "webhookId": "5ca363dd-9b85-4ba5-98ba-d2e40ac31ffe",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message?.audio?.file_id || $json.message?.voice?.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        288
+      ],
+      "id": "805b9770-dba3-4629-8d57-d61cce48bfd2",
+      "name": "Reply File",
+      "webhookId": "e4ac74ce-ffdd-43dc-ba00-3a96f853e88b",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot8056096596:AAHPC6J2HNnXNzvmxvEHX-ChANBvaNG3Ziw/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        672,
+        288
+      ],
+      "id": "6897e6fa-b72a-4a93-8853-37c007326f3e",
+      "name": "Get File From Telegram"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  if (item.binary && item.binary.data) {\n    // הבטחת Mime Type ש-OpenAI אוהב\n    item.binary.data.mimeType = 'audio/mpeg';\n    \n    // הבטחת שם קובץ תקין עם סיומת שהם מכירים\n    // לפעמים טלגרם שולחת שמות ללא סיומת או סיומת לא מזוהה\n    item.binary.data.fileName = 'recording.mp3'; \n    item.binary.data.fileExtension = 'mp3';\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        288
+      ],
+      "id": "ce54a51a-608c-4766-9bfa-ba58f58389eb",
+      "name": "Update Binay Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1120,
+        288
+      ],
+      "id": "945998b4-d602-426b-a504-2966827690a5",
+      "name": "Get Transcription from Groq",
+      "credentials": {
+        "groqApi": {
+          "id": "Kr9Xqyxi1JfFq5Pq",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "claude-sonnet-4-5-20250929"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are \"Audio Brain,\" an elite AI assistant designed to transform raw voice note transcriptions into organized, actionable intelligence.\n\nYour goal is to analyze the provided text and structure your response as follows:\n\n1. 🎯 **Executive Summary**: A concise 2-3 sentence overview of the recording.\n2. ✅ **Action Items**: A clear, bulleted list of tasks, deadlines, or next steps mentioned.\n3. 💡 **Key Insights**: Important names, dates, or specific details that shouldn't be missed.\n\n**Guidelines:**\n- Maintain a professional yet accessible tone.\n- Use emojis to enhance readability.\n- Match the language of the transcription (if the transcript is in Hebrew, provide the analysis in Hebrew; if English, stay in English).\n- Always end your response with the exact signature below.\n\n---\n🛠️ **Created by:** [Inbal Sertshuk](https://www.linkedin.com/in/inbal-sertshuk-46858519)",
+              "role": "assistant"
+            },
+            {
+              "content": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        288
+      ],
+      "id": "f0388dba-c6a6-4e31-a22f-187b8e5cbede",
+      "name": "Get Analisys from Claude",
+      "credentials": {
+        "anthropicApi": {
+          "id": "cCqqbtLjkO1AHwAL",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
+        "text": "={{ $json.content[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        288
+      ],
+      "id": "1fadbbf9-593e-45ec-a804-8936b3fb4639",
+      "name": "Audio Brain Reply",
+      "webhookId": "33d17661-171f-4f76-81e7-45710522f2fb",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        96
+      ],
+      "id": "16c22ed1-62cd-4e13-855a-acd25c3cabda",
+      "name": "Audio Brain Bot Gets a Message",
+      "webhookId": "e6761745-ea48-4918-a2a2-2c0dba69746f",
+      "credentials": {
+        "telegramApi": {
+          "id": "4iygwNwfi8IqNR8E",
+          "name": "Audio Brain"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Reply Start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply File": {
+      "main": [
+        [
+          {
+            "node": "Get File From Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get File From Telegram": {
+      "main": [
+        [
+          {
+            "node": "Update Binay Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Binay Data": {
+      "main": [
+        [
+          {
+            "node": "Get Transcription from Groq",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Transcription from Groq": {
+      "main": [
+        [
+          {
+            "node": "Get Analisys from Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Analisys from Claude": {
+      "main": [
+        [
+          {
+            "node": "Audio Brain Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Brain Bot Gets a Message": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "ce84f9ec-d7ac-4d20-8f41-282fee2391f9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "02b2c9f7af125809c04048003cda25eff918401f732ad2a9228d5ff437ce8c82"
+  },
+  "id": "amPwDVHPPDlsNqlF0uaTl",
+  "tags": []
+}
