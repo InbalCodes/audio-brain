@@ -4,12 +4,13 @@
 
 ## 🔗 Link to Bot
 Start using the bot here: [@AudioBrain_bot](https://t.me/AudioBrain_bot)
-
+  
 ## 🚀 Version 1.0 (Current)
 - **Voice-to-Text**: Powered by **Groq (Whisper-large-v3)** for lightning-fast transcription.
 - **AI Analysis**: Powered by **Claude 4.5 Sonnet** to extract summaries, action items, and insights.
 - **Telegram Integration**: Seamlessly handles both voice messages and audio file uploads.
 - **Smart Formatting**: Clean, emoji-rich reports delivered directly to your chat.
+- **Bilingual & Context-Aware**: AudioBrain is designed to handle both Hebrew and English seamlessly and replies in the same language as the voice note.
 
 ## 🛠 Tech Stack
 - **n8n**: Workflow automation.
