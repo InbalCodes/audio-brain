@@ -178,7 +178,7 @@
       "typeVersion": 1.2,
       "position": [
         672,
-        192
+        144
       ],
       "id": "805b9770-dba3-4629-8d57-d61cce48bfd2",
       "name": "Reply File",
@@ -205,7 +205,7 @@
       "typeVersion": 4.3,
       "position": [
         896,
-        192
+        144
       ],
       "id": "6897e6fa-b72a-4a93-8853-37c007326f3e",
       "name": "Get File From Telegram"
@@ -218,7 +218,7 @@
       "typeVersion": 2,
       "position": [
         1120,
-        192
+        144
       ],
       "id": "ce54a51a-608c-4766-9bfa-ba58f58389eb",
       "name": "Update Binay Data"
@@ -349,7 +349,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
-        "text": "=⚠️ File too large! Currently, I can only process files up to 25MB. Stay tuned for version 2.0!",
+        "text": "=I'm all ears! 🎧 Currently, I can only process voice notes and audio files. Please send an audio message and I'll get to work!",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -357,12 +357,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
-        384
+        448,
+        480
       ],
-      "id": "85fd44ea-7da2-4f6d-a173-86c45c4899f5",
-      "name": "Send a text message",
-      "webhookId": "cac1f16e-152b-4a34-8de9-e2e69b04c6ed",
+      "id": "6e5a1b2d-1a67-4bc5-aff0-8d37e6b7dad9",
+      "name": "Send a text message1",
+      "webhookId": "6f38a002-f84e-4d36-99b4-4db08bed0762",
       "credentials": {
         "telegramApi": {
           "id": "4iygwNwfi8IqNR8E",
@@ -382,15 +382,24 @@
           "conditions": [
             {
               "id": "2a0aeea4-5a47-4136-af79-622ec181e264",
-              "leftValue": "={{ $('Audio Brain Bot Gets a Message').item.json.message.audio.file_size }}",
-              "rightValue": 26214400,
+              "leftValue": "={{ $json.message.audio.file_size }}",
+              "rightValue": 20971520,
               "operator": {
                 "type": "number",
-                "operation": "lt"
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "8a5e32cd-a4f0-49b9-b910-10023a4f0d15",
+              "leftValue": "={{ $json.message.voice.file_size }}",
+              "rightValue": 20971520,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
               }
             }
           ],
-          "combinator": "and"
+          "combinator": "or"
         },
         "options": {}
       },
@@ -401,12 +410,90 @@
         288
       ],
       "id": "6fc5e184-9545-4ccd-9fa2-5ffc6e93aa15",
-      "name": "Check File Size < 25MB"
+      "name": "Check File Size > 20MB"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://audiobrain-bridge.onrender.com/process",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fileId",
+              "value": "={{ $json.message?.voice?.file_id || $json.message?.audio?.file_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        896,
+        384
+      ],
+      "id": "f3695195-e727-43cc-9659-9447020adee2",
+      "name": "Get Large File from Telegram Using Cloudinary + Bridge",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.secure_url.replace('/upload/', '/upload/br_32k/') }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1120,
+        384
+      ],
+      "id": "f88fda8c-7a5a-40f1-9e93-e974e6138b18",
+      "name": "Download Large File From Cloudinary",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "https://api.cloudinary.com/v1_1/dkhtduj3v/video/destroy",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "public_id",
+              "value": "={{ $json.secure_url.split('/').pop().split('.')[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1344,
+        432
+      ],
+      "id": "627ee1cd-1b69-498a-8a2f-10f1e8994565",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "HLm1OUzEifYvRTyJ",
+          "name": "Unnamed credential"
+        }
+      }
     },
     {
       "parameters": {
         "chatId": "={{ $('Audio Brain Bot Gets a Message').item.json.message.chat.id }}",
-        "text": "=I'm all ears! 🎧 Currently, I can only process voice notes and audio files. Please send an audio message and I'll get to work!",
+        "text": "=Large file detected! 📂 This might take a minute or two... please hang tight! 🚀",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -414,12 +501,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        448,
-        480
+        672,
+        384
       ],
-      "id": "6e5a1b2d-1a67-4bc5-aff0-8d37e6b7dad9",
-      "name": "Send a text message1",
-      "webhookId": "6f38a002-f84e-4d36-99b4-4db08bed0762",
+      "id": "0ee8f6a7-fd52-4982-8664-f6e1c41be39c",
+      "name": "Send a text message",
+      "webhookId": "8b4db39c-8ff1-4852-a4a6-94679b854aca",
       "credentials": {
         "telegramApi": {
           "id": "4iygwNwfi8IqNR8E",
@@ -448,14 +535,14 @@
         ],
         [
           {
-            "node": "Check File Size < 25MB",
+            "node": "Check File Size > 20MB",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Check File Size < 25MB",
+            "node": "Check File Size > 20MB",
             "type": "main",
             "index": 0
           }
@@ -535,18 +622,66 @@
         ]
       ]
     },
-    "Check File Size < 25MB": {
+    "Send a text message1": {
+      "main": [
+        []
+      ]
+    },
+    "Check File Size > 20MB": {
       "main": [
         [
           {
-            "node": "Reply File",
+            "node": "Send a text message",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Send a text message",
+            "node": "Reply File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Large File from Telegram Using Cloudinary + Bridge": {
+      "main": [
+        [
+          {
+            "node": "Download Large File From Cloudinary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Large File From Cloudinary": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Transcription from Groq",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Get Large File from Telegram Using Cloudinary + Bridge",
             "type": "main",
             "index": 0
           }
@@ -557,9 +692,12 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
   },
-  "versionId": "0186ba83-004f-4339-8124-75388489b9bf",
+  "versionId": "7d11b9e6-965f-41ac-83af-7ad36ffe2a90",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "02b2c9f7af125809c04048003cda25eff918401f732ad2a9228d5ff437ce8c82"
