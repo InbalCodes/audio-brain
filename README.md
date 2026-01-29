@@ -28,6 +28,7 @@ AudioBrain isn't just a simple bot; it's a distributed system designed for scale
 ### v3.0 - Productivity Ecosystem
 - **Calendar Integration**: Automatic creation of Google Calendar events/reminders directly from voice notes.
 - **Personalized Storage**: Users can choose where to save meeting summaries (Notion, Google Sheets, or Obsidian) via bot commands.
+- **Enterprise Scale**: Support for 2+ hour recordings.
 
 ---
 🛠️ **Developed by:** [Inbal Sertshuk](https://www.linkedin.com/in/inbal-sertshuk-46858519)
