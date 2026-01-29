@@ -21,7 +21,8 @@ AudioBrain isn't just a simple bot; it's a distributed system designed for scale
 - **Anthropic API:** Advanced LLM for high-fidelity summarization.
 
 ## 💡 The Problem & The Solution
-**The Problem:** Telegram Bots are limited to 20MB files, and LLM providers (like Groq) often cap uploads at 25MB. This makes summarizing long lectures or meetings impossible with standard tools. **The Solution:** AudioBrain detects large files and routes them through a dedicated "Bridge." The bridge optimizes the audio (32kbps Mono) to shrink the file size by up to 80% without losing speech quality, ensuring it fits perfectly into the AI's processing window.
+- **The Problem:** Telegram Bots are limited to 20MB files, and LLM providers (like Groq) often cap uploads at 25MB. This makes summarizing long lectures or meetings impossible with standard tools. 
+- **The Solution:** AudioBrain detects large files and routes them through a dedicated "Bridge." The bridge optimizes the audio (32kbps Mono) to shrink the file size by up to 80% without losing speech quality, ensuring it fits perfectly into the AI's processing window.
 
 ## 📅 Roadmap (Upcoming)
 ### v3.0 - Productivity Ecosystem
